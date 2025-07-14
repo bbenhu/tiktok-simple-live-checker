@@ -15,6 +15,10 @@ app.get('/isLive/:username', async (req, res) => {
     }
 });
 
+app.get('/', (req, res) => {
+  res.send('OK működik');
+});
+
 app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`);
 });
