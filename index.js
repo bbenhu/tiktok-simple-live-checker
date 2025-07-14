@@ -11,7 +11,7 @@ app.get('/isLive/:username', (req, res) => {
     connection.connect().then(state => {
         console.log(`✅ ${username} élőben van! RoomID: ${state.roomId}`);
         connection.disconnect(); // lezárjuk a kapcsolatot
-        res.json({ username, live: true });
+        res.json({ username, live: true, state: state });
     }).catch(err => {
         console.warn(`❌ ${username} nem élőzik vagy nem elérhető: ${err.message}`);
         res.json({ username, live: false, error: err.message });
