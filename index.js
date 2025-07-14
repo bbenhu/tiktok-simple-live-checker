@@ -4,26 +4,24 @@ import { TikTokLiveConnection } from 'tiktok-live-connector';
 const app = express();
 const PORT = process.env.PORT || 10000;
 
-app.get('/isLive/:username', async (req, res) => {
-  const username = req.params.username;
-  const connection = new TikTokLiveConnection(username);
+app.get('/isLive/:username', (req, res) => {
+    const username = req.params.username;
+    const connection = new TikTokLiveConnection(username);
 
-  try {
-    const state = await connection.connect();
-
-    // Ha ide eljut, akkor élőben van
-    await connection.disconnect(); // csak ellenőrzésre használtuk
-    res.json({ username, live: true, roomId: state.roomId });
-  } catch (err) {
-    // Ha nem élőzik vagy unreachable, ide fut
-    res.json({ username, live: false, error: err.message });
-  }
+    connection.connect().then(state => {
+        console.log(`✅ ${username} élőben van! RoomID: ${state.roomId}`);
+        connection.disconnect(); // lezárjuk a kapcsolatot
+        res.json({ username, live: true });
+    }).catch(err => {
+        console.warn(`❌ ${username} nem élőzik vagy nem elérhető: ${err.message}`);
+        res.json({ username, live: false, error: err.message });
+    });
 });
 
-app.get('/', (_, res) => {
-  res.send('✅ TikTok Live API működik (v2).');
+app.get('/', (req, res) => {
+    res.send('✅ TikTok Live API működik (helyesen).');
 });
 
 app.listen(PORT, () => {
-  console.log(`TikTok Live checker fut a ${PORT} porton`);
+    console.log(`🚀 Szerver fut: http://localhost:${PORT}`);
 });
